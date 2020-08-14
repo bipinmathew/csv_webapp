@@ -1,0 +1,74 @@
+<!doctype html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<form>
+  <select id="file_list" size="10" >
+  </select>
+</form>
+
+
+<table id="file_list" border=1>
+<tr>
+  <th>Select</th>
+  <th>Woot</th>
+</tr>
+</table>
+
+<form id="upload_form" enctype="multipart/form-data">
+    <input name="file" type="file" />
+    <input type="button" value="Upload" />
+</form>
+<progress></progress>
+
+<script>
+var get_files = function(){
+  $.getJSON("/api/csv",function(data){
+    data.files.forEach(file => {
+      $('#file_list').append(new Option(file, file));
+    });
+  });
+}
+
+$(document).ready(function(){
+  get_files()
+});
+
+$('progress').attr({
+  value: 0,
+  max: 100,
+});
+
+$(':file').on('change', function () {
+  var file = this.files[0];
+});
+$(':button').on('click', function () {
+  $.ajax({
+    url: '/api/csv',
+    type: 'POST',
+    data: new FormData($('#upload_form')[0]),
+
+    cache: false,
+    contentType: false,
+    processData: false,
+
+    xhr: function () {
+      console.log($('#upload_form'));
+      var myXhr = $.ajaxSettings.xhr();
+      if (myXhr.upload) {
+        // For handling the progress of the upload
+        myXhr.upload.addEventListener('progress', function (e) {
+          if (e.lengthComputable) {
+            $('progress').attr({
+              value: e.loaded,
+              max: e.total,
+            });
+          }
+        }, false);
+      }
+      return myXhr;
+    },
+
+    success: get_files
+
+  });
+});
+</script>
