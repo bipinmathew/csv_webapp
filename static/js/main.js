@@ -1,18 +1,3 @@
-<!doctype html>
-<script src="https://unpkg.com/vue@next"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<form>
-  <select id="file_list" size="10" >
-  </select>
-</form>
-
-<form id="upload_form" enctype="multipart/form-data">
-    <input name="file" type="file" />
-    <input type="button" value="Upload" />
-</form>
-<progress></progress>
-
-<script>
 var get_files = function(){
   $.getJSON("/api/csv",function(data){
     data.files.forEach(file => {
@@ -64,4 +49,3 @@ $(':button').on('click', function () {
 
   });
 });
-</script>
