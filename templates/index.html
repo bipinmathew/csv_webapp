@@ -1,6 +1,14 @@
 <!doctype html>
-<script src="https://unpkg.com/vue@next"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.0-rc.5/vue.global.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<div id="app" >
+	<ul>
+		<li v-for="file in files">[[ file ]]</li>
+	</ul>
+</div>
 <form>
   <select id="file_list" size="10" >
   </select>
@@ -13,3 +21,4 @@
 <progress></progress>
 
 <script src="/static/js/main.js"> </script>
+<script> const mountApp = app.mount('#app'); </script>

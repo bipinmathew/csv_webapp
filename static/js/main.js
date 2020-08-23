@@ -1,3 +1,17 @@
+const app = Vue.createApp({
+	delimiters: ['[[',']]'],
+	data: function(){
+		return {
+			files: 'Hello' 
+		}
+	},
+	mounted: function(){
+		axios.get('/api/csv')
+			.then(response => (this.files = response.data.files));
+	}
+
+})
+
 var get_files = function(){
   $.getJSON("/api/csv",function(data){
     data.files.forEach(file => {
@@ -46,6 +60,5 @@ $(':button').on('click', function () {
     },
 
     success: get_files
-
   });
 });
