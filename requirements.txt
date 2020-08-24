@@ -3,8 +3,12 @@ Flask==1.1.2
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
+numpy==1.18.5
 packaging==20.4
+pandas==0.24.2
 pkg-resources==0.0.0
 pyparsing==3.0.0a2
+python-dateutil==2.8.1
+pytz==2020.1
 six==1.15.0
 Werkzeug==1.0.1
