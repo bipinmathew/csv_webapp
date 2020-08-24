@@ -19,6 +19,7 @@
   "dependencies": {
     "@popperjs/core": "^2.4.4",
     "axios": "^0.20.0",
+    "gridjs": "^1.15.4",
     "jquery": "^3.5.1",
     "vue": "^3.0.0-rc.7"
   }

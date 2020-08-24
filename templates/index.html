@@ -8,13 +8,16 @@
     <div id="app" >
       <form>
         <select id="file_list" size="10" >
-          <option v-for="file in files">[[ file ]]</option>
+          <option v-for="file in files" v-on:click="handlePreview(file)">[[ file ]]</option>
         </select>
       </form>
 
+      <table id="csv_preview">
+      </table>
+
       <form id="upload_form" enctype="multipart/form-data">
-          <input name="file" type="file" />
-          <input type="button" value="Upload" />
+          <input name="file" type="file" v-on:change="updateFile" />
+          <input type="button" value="Upload" v-on:click="uploadHandler" />
       </form>
       <progress></progress>
     </div>
