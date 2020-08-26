@@ -2,18 +2,22 @@
 <html>
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
 
   </head>
   <body>
     <div id="app" >
       <form>
         <select id="file_list" size="10" >
-          <option v-for="file in files" v-on:click="handlePreview(file)">[[ file ]]</option>
+          <option v-for="file in files" v-on:click="selected_file=file" >[[ file ]]</option>
         </select>
+        <button v-on:click="handlePreview" v-on:click.prevent >Preview</button>
+        <button v-on:click="handleDownload" v-on:click.prevent >Download</button>
+        <button v-on:click="handleStats" v-on:click.prevent >Stats</button>
       </form>
 
-      <table id="csv_preview">
-      </table>
+      <div id="csv_preview">
+      </div>
 
       <form id="upload_form" enctype="multipart/form-data">
           <input name="file" type="file" v-on:change="updateFile" />

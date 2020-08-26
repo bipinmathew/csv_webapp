@@ -1,13 +1,14 @@
 var Vue = require("vue");
 var axios = require("axios");
 var $ = require("jquery");
-window.Grid = require("gridjs");
+var gridjs = require("gridjs");
 
 window.app = Vue.createApp({
 	delimiters: ['[[',']]'],
 	data: function(){
 		return {
-			files: [] 
+			files: [] ,
+      selected_file: null
 		}
 	},
   methods: {
@@ -42,10 +43,12 @@ window.app = Vue.createApp({
     updateFile: function(){
       var file = this.files[0];
     },
-    handlePreview: function(args){
-      console.log(args);
-      axios.get('/api/csv/'+args)
-        .then(response =>(Grid.Grid(response.data.csv).render(document.getElementById('#csv_preview'))));
+    handlePreview: function(){
+      axios.get('/api/csv/'+this.selected_file)
+        .then(response => {
+          var grid = new gridjs.Grid(JSON.parse(response.data.csv))
+            .render(document.getElementById("csv_preview"));
+        });
     }
   },
 	mounted: function(){
