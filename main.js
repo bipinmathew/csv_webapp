@@ -13,6 +13,7 @@ window.app = Vue.createApp({
 	},
   methods: {
     uploadHandler: function(){
+			var mythis = this;
       $.ajax({
         url: '/api/csv',
         type: 'POST',
@@ -38,6 +39,10 @@ window.app = Vue.createApp({
           }
           return myXhr;
         },
+				success: function(){
+					axios.get('/api/csv')
+						.then(response => (mythis.files = response.data.body.files));
+				}
       });
     },
     updateFile: function(){
@@ -46,10 +51,23 @@ window.app = Vue.createApp({
     handlePreview: function(){
       axios.get('/api/csv/'+this.selected_file)
         .then(response => {
-          var grid = new gridjs.Grid(JSON.parse(response.data.csv))
+          var grid = new gridjs.Grid(JSON.parse(response.data.body))
             .render(document.getElementById("csv_preview"));
         });
-    }
+    },
+    handleDownload: function(){
+      axios.get('/api/csv/'+this.selected_file+'/download')
+        .then(response => {
+					window.location = '/api/csv/'+this.selected_file+'/download'
+        });
+    },
+    handleStats: function(){
+      axios.get('/api/csv/'+this.selected_file+'/stats')
+        .then(response => {
+          var grid = new gridjs.Grid(JSON.parse(response.data.body))
+            .render(document.getElementById("csv_preview"));
+        });
+    },
   },
 	mounted: function(){
     $('progress').attr({
@@ -57,6 +75,6 @@ window.app = Vue.createApp({
       max: 100,
     });
 		axios.get('/api/csv')
-			.then(response => (this.files = response.data.files));
+			.then(response => (this.files = response.data.body.files));
 	}
 });

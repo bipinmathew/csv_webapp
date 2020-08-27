@@ -6,24 +6,43 @@
 
   </head>
   <body>
+		<div class="jumbotron">
+			<h1 class="display-4">A CSV WebApp</h1>
+			<p class="lead">This is a simple application to upload, preview, summarize, and download CSV files.</p>
+		</div> 
+
+
     <div id="app" >
-      <form>
-        <select id="file_list" size="10" >
-          <option v-for="file in files" v-on:click="selected_file=file" >[[ file ]]</option>
-        </select>
-        <button v-on:click="handlePreview" v-on:click.prevent >Preview</button>
-        <button v-on:click="handleDownload" v-on:click.prevent >Download</button>
-        <button v-on:click="handleStats" v-on:click.prevent >Stats</button>
-      </form>
-
-      <div id="csv_preview">
-      </div>
-
       <form id="upload_form" enctype="multipart/form-data">
-          <input name="file" type="file" v-on:change="updateFile" />
-          <input type="button" value="Upload" v-on:click="uploadHandler" />
+				
+				<div class="form-group" >
+					<label>Upload a CSV</label>
+					<br/>
+					<input name="file" type="file" v-on:change="updateFile" />
+					<br/>
+					<button class="btn btn-secondary" v-on:click="uploadHandler" v-on:click.prevent >Upload</button>
+					<progress></progress>
+				</div>
+
+				<hr/>
+        <div class="form-group">
+
+          <select  v-model="selected_file" class="form-control"  id="file_list">
+						<option disabled value="">Please select one</option>
+            <option v-for="file in files"  v-bind:value="file">[[ file ]]</option>
+          </select>
+        </div>
+        <div class="btn-group" role="group">
+          <button class="btn btn-secondary" v-on:click="handlePreview" v-on:click.prevent >Preview</button>
+          <button class="btn btn-secondary" v-on:click="handleDownload" v-on:click.prevent >Download</button>
+          <button class="btn btn-secondary" v-on:click="handleStats" v-on:click.prevent >Stats</button>
+        </div>
+				<hr/>
       </form>
-      <progress></progress>
+
+			<div id="csv_preview">
+			</div>
+
     </div>
   </body>
   <script src="/static/js/build.js" ></script>
