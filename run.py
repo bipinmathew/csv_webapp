@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, send_file
 from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from markupsafe import escape
@@ -58,9 +58,7 @@ def csv_preview(filename):
 @app.route("/api/csv/<filename>/download", methods=['GET'])
 def csv_download(filename):
 	with open(os.path.join(app.config['UPLOAD_FOLDER'], filename),'r') as fp:
-		resp = Response(fp.read())
-		resp.headers["Content-Disposition"] = """attachment; filename='%s'"""%(filename)
-		return resp 
+    return send_file(fp,attachment_filename=filename, as_attachment=True )
 
 @app.route("/api/csv/<filename>/stats", methods=['GET'])
 def csv_stats(filename):
