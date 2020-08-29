@@ -12,7 +12,7 @@ window.app = Vue.createApp({
 		}
 	},
 	created: function(){
-		this._grid = new gridjs.Grid();
+		this._grid = new gridjs.Grid({data:[],columns:[]});
 	},
   methods: {
     uploadHandler: function(){
@@ -53,6 +53,10 @@ window.app = Vue.createApp({
     },
     handlePreview: function(){
 			var mythis = this;
+			if(!this.selected_file){
+				alert("Please select a file first.");
+				return(0);
+			}
       axios.get('/api/csv/'+this.selected_file+'?start=0&get=10')
         .then(response => {
 					var obj = {
@@ -80,26 +84,47 @@ window.app = Vue.createApp({
 					$('#csv_preview').empty();
 					mythis._grid.updateConfig(returned_data)
 						.forceRender();
-        });
+        })
+			.catch(function(error){
+				alert(error.response.data.msg);
+			});
     },
     handleDownload: function(){
+			if(!this.selected_file){
+				alert("Please select a file first.");
+				return(0);
+			}
       axios.get('/api/csv/'+this.selected_file+'/download')
         .then(response => {
 					window.location = '/api/csv/'+this.selected_file+'/download'
-        });
+        })
+				.catch(function(error){
+					alert(error.response.data.msg);
+				});
     },
     handleStats: function(){
+			if(!this.selected_file){
+				alert("Please select a file first.");
+				return(0);
+			}
 			var mythis = this;
       axios.get('/api/csv/'+this.selected_file+'/stats')
         .then(response => {
 					$('#csv_preview').empty();
-					mythis._grid.updateConfig(response.data.body)
+					var obj = response.data.body;
+					obj.pagination = false;
+					obj.server = null;
+					mythis._grid
+						.updateConfig(obj)
 						.forceRender();
-        });
+        })
+			.catch(function(error){
+				alert(error.response.data.msg);
+			});
     },
   },
 	mounted: function(){
-		this._grid.updateConfig({}).render(document.getElementById('csv_preview'));
+		this._grid.render(document.getElementById('csv_preview'));
     $('progress').attr({
       value: 0,
       max: 100,

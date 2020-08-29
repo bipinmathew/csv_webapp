@@ -54,14 +54,21 @@ def csv_preview(filename):
 	v=request.args.get('start')
 	if(v):
 		start = int(v)
+
 	v=request.args.get('get')
 	if(v):
-		get = int(v)
-	df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-	num_rows = len(df.index)
-	end = min(start+get,num_rows)
-	df = df.iloc[start:end]
-	df['state'].fillna('BLANK',inplace=True)
+		get = int(v)		
+
+	try:
+	  df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+	  num_rows = len(df.index)
+	  end = min(start+get,num_rows)
+	  df = df.iloc[start:end]
+	except:
+	  return construct_response(500,{},msg="Could not preview file.")
+	if 'state' in df.columns:
+		df['state'].fillna('BLANK',inplace=True)
 	parsed = df.to_dict(orient="split")
 	parsed['total'] = num_rows
 	return construct_response(200,parsed)
@@ -77,12 +84,22 @@ def csv_download(filename):
 
 @app.route("/api/csv/<filename>/stats", methods=['GET'])
 def csv_stats(filename):
-  df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-  df['date'] = pd.to_datetime(df['date'])
-  zz = df['date'].groupby(df.date.dt.year).agg('count').to_frame(name="count")
-  zz['year'] = zz.index
-  return construct_response(200,zz.to_dict(orient="split"))
+	try:
+		df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+	except:
+	  return construct_response(500,{},msg="Could not open file to obtain statistics.")
+	if 'date' not in df.columns:
+	  return construct_response(500,{},msg="No date columns found in file.")
 
- 
+	try:
+		df['date'] = pd.to_datetime(df['date'])
+		zz = df['date'].groupby(df.date.dt.year).agg('count').to_frame(name="count")
+		zz['year'] = zz.index
+	except:
+	  return construct_response(500,{},msg="Error doing groupby on date column.")
+
+	return construct_response(200,zz.to_dict(orient="split"))
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
