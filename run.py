@@ -81,7 +81,7 @@ def csv_stats(filename):
   df['date'] = pd.to_datetime(df['date'])
   zz = df['date'].groupby(df.date.dt.year).agg('count').to_frame(name="count")
   zz['year'] = zz.index
-  return construct_response(200,zz.to_json(orient="split"))
+  return construct_response(200,zz.to_dict(orient="split"))
 
  
 if __name__ == "__main__":
