@@ -49,11 +49,38 @@ window.app = Vue.createApp({
       var file = this.files[0];
     },
     handlePreview: function(){
-      axios.get('/api/csv/'+this.selected_file)
+			var myobj = this;
+			myobj.columns = [];
+			var grid = new gridjs.Grid({
+				pagination: {
+					limit: 10,
+					server:{
+						url: function(prev,page,limit){
+							return prev+'?start='+(page*limit)+'&get='+limit;
+						}
+					}
+				},
+				server: {
+					url:'/api/csv/'+this.selected_file,
+					then: function(response){
+						myobj.columns = response.body.columns;
+						return response.body.data;
+					},
+					total: function(response){
+						return response.body.total;
+					}
+				}
+			});
+
+			grid.updateConfig({columns:myobj.columns}).render(document.getElementById("csv_preview"));
+
+			/**
+      axios.get('/api/csv/'+this.selected_file+'?start=0&get=10')
         .then(response => {
           var grid = new gridjs.Grid(JSON.parse(response.data.body))
             .render(document.getElementById("csv_preview"));
         });
+				**/
     },
     handleDownload: function(){
       axios.get('/api/csv/'+this.selected_file+'/download')

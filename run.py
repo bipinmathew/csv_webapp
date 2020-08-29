@@ -49,16 +49,31 @@ def csv_list():
 
 @app.route("/api/csv/<filename>", methods=['GET'])
 def csv_preview(filename):
-  df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-  df = df.head(10)
-  parsed = df.to_json(orient="split")
-  return construct_response(200,parsed)
+	start = 0
+	get = 10
+	v=request.args.get('start')
+	if(v):
+		start = int(v)
+	v=request.args.get('get')
+	if(v):
+		get = int(v)
+	df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+	num_rows = len(df.index)
+	end = min(start+get,num_rows)
+	df = df.iloc[start:end]
+	df['state'].fillna('BLANK',inplace=True)
+	parsed = df.to_dict(orient="split")
+	parsed['total'] = num_rows
+	return construct_response(200,parsed)
 
 
 @app.route("/api/csv/<filename>/download", methods=['GET'])
 def csv_download(filename):
-	with open(os.path.join(app.config['UPLOAD_FOLDER'], filename),'r') as fp:
-    return send_file(fp,attachment_filename=filename, as_attachment=True )
+	try:
+		fp = open(os.path.join(app.config['UPLOAD_FOLDER'], filename),'rb')
+	except:
+		return construct_response(404,{},"""Could not retrieve file %s"""%(filename))
+	return send_file(fp,attachment_filename=filename, as_attachment=True )
 
 @app.route("/api/csv/<filename>/stats", methods=['GET'])
 def csv_stats(filename):
