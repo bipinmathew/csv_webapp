@@ -79,7 +79,7 @@ window.app = Vue.createApp({
 					returned_data.server=obj.server;
 					$('#csv_preview').empty();
 					mythis._grid.updateConfig(returned_data)
-						.render(document.getElementById('csv_preview')).forceRender();
+						.forceRender();
         });
     },
     handleDownload: function(){
@@ -94,11 +94,12 @@ window.app = Vue.createApp({
         .then(response => {
 					$('#csv_preview').empty();
 					mythis._grid.updateConfig(response.data.body)
-						.render(document.getElementById('csv_preview')).forceRender();
+						.forceRender();
         });
     },
   },
 	mounted: function(){
+		this._grid.updateConfig({}).render(document.getElementById('csv_preview'));
     $('progress').attr({
       value: 0,
       max: 100,
