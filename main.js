@@ -9,12 +9,20 @@ window.app = Vue.createApp({
 		return {
 			files: [] ,
       selected_file: null,
+			upload_file: null,
+			loading: false
 		}
 	},
 	created: function(){
 		this._grid = new gridjs.Grid({data:[],columns:[]});
 	},
   methods: {
+		updateFile: function(event){
+			if(event.target.files[0])
+				this.upload_file=event.target.files[0].name;
+			else
+				this.upload_file=null;
+		},
     uploadHandler: function(){
 			var mythis = this;
       $.ajax({
@@ -27,7 +35,6 @@ window.app = Vue.createApp({
         processData: false,
 
         xhr: function () {
-          console.log($('#upload_form'));
           var myXhr = $.ajaxSettings.xhr();
           if (myXhr.upload) {
             // For handling the progress of the upload
@@ -44,12 +51,17 @@ window.app = Vue.createApp({
         },
 				success: function(){
 					axios.get('/api/csv')
-						.then(response => (mythis.files = response.data.body.files));
+						.then(function(response){
+							$('progress').attr({
+								value: 0,
+								max: 100,
+							});
+							mythis.files = response.data.body.files;
+							mythis.selected_file = mythis.upload_file;
+							mythis.upload_file = null;
+						});
 				}
       });
-    },
-    updateFile: function(){
-      var file = this.files[0];
     },
     handlePreview: function(){
 			var mythis = this;
@@ -57,6 +69,7 @@ window.app = Vue.createApp({
 				alert("Please select a file first.");
 				return(0);
 			}
+			mythis.loading = true;
       axios.get('/api/csv/'+this.selected_file+'?start=0&get=10')
         .then(response => {
 					var obj = {
@@ -87,6 +100,9 @@ window.app = Vue.createApp({
         })
 			.catch(function(error){
 				alert(error.response.data.msg);
+			})
+			.finally(function(){
+				mythis.loading = false;
 			});
     },
     handleDownload: function(){
@@ -108,6 +124,7 @@ window.app = Vue.createApp({
 				return(0);
 			}
 			var mythis = this;
+			mythis.loading = true;
       axios.get('/api/csv/'+this.selected_file+'/stats')
         .then(response => {
 					$('#csv_preview').empty();
@@ -120,6 +137,9 @@ window.app = Vue.createApp({
         })
 			.catch(function(error){
 				alert(error.response.data.msg);
+			})
+			.finally(function(){
+				mythis.loading = false;
 			});
     },
   },

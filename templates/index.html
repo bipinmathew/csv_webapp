@@ -16,17 +16,28 @@
       <form id="upload_form" enctype="multipart/form-data">
 				
 				<div class="form-group" >
+
+
 					<label>Upload a CSV</label>
 					<br/>
-					<input name="file" type="file" v-on:change="updateFile" />
-					<br/>
-					<button class="btn btn-secondary" v-on:click="uploadHandler" v-on:click.prevent >Upload</button>
-					<progress></progress>
+					<div>
+						<div class="custom-file" style="width:80%;float:left">
+							<input v-on:change="updateFile" name="file" class="custom-file-input"  type="file" id="customFile" />
+							<label v-bind:value="upload_file" class="custom-file-label" for="customFile">[[upload_file==null?"Choose file.":upload_file]]</label>
+						</div>
+						<div style="width=20%;float:left;margin-left:20px;">
+							<button class="btn btn-secondary" v-on:click="uploadHandler" v-on:click.prevent >Upload</button>
+						</div>
+						<div style="clear:both;padding-top:20px">
+							<progress style="width:80%"></progress>
+						</div>
+					</div>
 				</div>
 
 				<hr/>
         <div class="form-group">
 
+					<label>Select a file to analyze</label>
           <select  v-model="selected_file" class="form-control"  id="file_list">
 						<option disabled value="">Please select one</option>
             <option v-for="file in files"  v-bind:value="file">[[ file ]]</option>
@@ -37,8 +48,13 @@
           <button class="btn btn-secondary" v-on:click="handleDownload" v-on:click.prevent >Download</button>
           <button class="btn btn-secondary" v-on:click="handleStats" v-on:click.prevent >Stats</button>
         </div>
-				<hr/>
       </form>
+			<br/>
+			<br/>
+
+			<div v-if="loading">
+				 <span>Loading... </span>
+			</div>	
 
 			<div id="csv_preview">
 			</div>
@@ -47,4 +63,5 @@
   </body>
   <script src="/static/js/build.js" ></script>
   <script> const mountApp = app.mount('#app'); </script>
+
 </html>

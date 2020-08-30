@@ -2,6 +2,7 @@ from flask import Flask, Response, send_file
 from flask import render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from markupsafe import escape
+from pathlib import Path
 import os
 import json
 import pandas as pd
@@ -44,7 +45,10 @@ def csv_put():
 
 @app.route("/api/csv", methods=['GET'])
 def csv_list():
-  return construct_response(200,{'files': os.listdir(app.config['UPLOAD_FOLDER']) })
+	files = [os.path.join(app.config['UPLOAD_FOLDER'],file) for file in os.listdir(app.config['UPLOAD_FOLDER'])]
+	files = sorted(files,key=os.path.getmtime, reverse=True)
+	files = [os.path.split(file)[1] for file in files]
+	return construct_response(200,{'files': files })
 
 
 @app.route("/api/csv/<filename>", methods=['GET'])
