@@ -19,6 +19,7 @@ This application is very rudimentary. The following should be kept in mind:
 
 *This application is not meant for "big-data". The entire CSV is, at various points, stored in memory on the server side.
 
+*This application is not designed for concurrent access. It is possible for multiple users to trample on each other if they upload the same CSV for example.
 
 *This application uses the single threaded development webserver that comes with flask. This means only a single instance of the application can run and only a single client can be served at any given time.
 
